@@ -1,6 +1,7 @@
 # 2019-Fall-NLP
 SYSU QXJ
 <br/>
+
 **中期大作业：语言模型与新闻的内容预测**
 1. 从国内主流新闻网站（如腾讯、新浪、网易等）的科技频道抓取新闻内容
   * 要求新闻语言为中文，发布日期为2019年1月1日以后
@@ -17,6 +18,7 @@ SYSU QXJ
   * 例如：因为刷脸支付也得去打开手机接收验证码，所以还不如直接扫[MASK]更直接更方便。（ 标准答案：二维码）
   * 预测的结果好坏仅作为最终的分数的参考，重点在实验过程。
 <br/>
+
 **期末大作业：基于深度学习的中英机器翻译**
 1. 从WMT18（New Commentary）中抽取的中英句子对
   * 数据集规模：10000
@@ -39,6 +41,7 @@ SYSU QXJ
 6. 设备
   * CPU/GPU
 <br/>
+
 **All projects are based on Python**
 
 **If you have any question, you can e-mail to xuewh5@mail2.sysu.edu.cn**
