@@ -1,0 +1,354 @@
+
+原标题：英伟达小姐姐的Python隐藏技巧合集，推特2400赞，代码可以直接跑  来源：量子位
+关注前沿科技
+                                                    
+                                                                
+                                        
+                      
+                        量子位
+常常发资源的英伟达工程师小姐姐Chip Huyen，又发射了一套Python隐藏功能合集。
+里面都是她“从前没发现，或者从前不太敢用”的机器学习技巧，有notebook可以直接跑。
+合集名叫python-is-cool，推特宣布之后不到半天，已经收获了2400+赞。
+那么，这份令人奔走相告的资源，到底长什么样子？
+隐藏技巧五大类
+就像开头提到的：这里的功能，要么是小姐姐花了很久才找到的，要么是曾经让她瑟瑟发抖到不敢尝试的。
+不过现在，她的技巧已经成功支配了这些功能，于是分享了出来。
+目前一共有5个版块，专注机器学习，日后还会持续更新：
+1、Lambda、Map、Filter、Reduce函数
+lambda 关键字，是用来创建内联函数 (Inline Functions) 的。square_fn和square_ld函数，在这里是一样的。
+1defsquare_fn(x):
+2return x * x
+3
+4square_ld = lambda x : x * x
+5
+6for i in range(10):
+7assert square_fn(i) == square_ld(i)
+lambda函数可以快速声明，所以拿来当回调 (Callbacks) 函数是非常理想的：就是作为参数 (Arguments) 传递给其他函数用的，那种函数。
+和map、filter和reduce这样的函数搭配使用，尤其有效。
+map(fn,iterable) 会把fn应用在iterable的所有元素上，返回一个map object。
+1nums = [1/3, 333/7, 2323/2230, 40/34, 2/3]
+2nums_squared = [num * num for num in nums]
+3print(nums_squared)
+4
+5==> [0.1111111, 2263.04081632, 1.085147, 1.384083, 0.44444444]
+这样调用，跟用有回调函数的map来调用，是一样的。
+1nums_squared_1 = map(square_fn, nums)
+2nums_squared_2 = map(lambda x : x * x, nums)
+3print(list(nums_squared_1))
+4
+5==> [0.1111111, 2263.04081632, 1.085147, 1.384083, 0.44444444]
+map也可以有不止一个iterable。
+比如，你要想计算一个简单线性函数f(x)=ax+b的均方误差 (MSE) ，两种方法就是等同的。
+1a, b = 3, -0.5
+2xs = [2, 3, 4, 5]
+3labels = [6.4, 8.9, 10.9, 15.3]
+4
+5# Method 1: using a loop
+6errors = []
+7for i, x in enumerate(xs):
+8    errors.append((a * x + b - labels[i]) ** 2)
+9result1 = sum(errors) ** 0.5 / len(xs)
+10
+11# Method 2: using map
+12diffs = map(lambda x, y: (a * x + b - y) ** 2, xs, labels)
+13result2 = sum(diffs) ** 0.5 / len(xs)
+14
+15print(result1, result2)
+16
+17==> 0.350891721190455140.35089172119045514
+要注意的是，map和filter返回的是迭代器 (Iterator) ，这就是说它们的值不是存储的，是按需生成的。
+当你调用了sum(diffs) 之后，diffs就空了。如果你想要保留diffs里面所有的元素，就用list(diffs) 把它转换成一个列表。
+filter(fn,iterable) 也是和map一样道理，只不过fn返回的是一个布尔值，filter返回的是，iterable里面所有fn返回True的元素。
+1bad_preds = filter(lambda x: x > 0.5, errors)
+2print(list(bad_preds))
+3
+4==> [0.8100000000000006, 0.6400000000000011]
+reduce(fn,iterable,initializer) 是用来给列表里的所有元素，迭代地应用某一个算子。比如，想要算出列表里所有元素的乘积：
+1product = 1
+2for num in nums:
+3    product *= num
+4print(product)
+5
+6==> 12.95564683272412
+上面这串代码，和下面这串代码是等同的：
+1from functools import reduce
+2product = reduce(lambda x, y: x * y, nums)
+3print(product)
+4
+5==> 12.95564683272412
+2、列表操作
+小姐姐说，Python的列表太炫酷了。
+2.1、解包 (Unpacking)
+想把一个列表解包成一个一个元素，就这样：
+1elems = [1, 2, 3, 4]
+2a, b, c, d = elems
+3print(a, b, c, d)
+4
+5==> 1234
+也可以这样：
+1elems = [1, 2, 3, 4]
+2a, b, c, d = elems
+3print(a, b, c, d)
+4
+5==> 1234
+2.2、切片 (Slicing)
+大家可能知道，如果想把一个列表反过来排，就用[::-1]。
+1elems = list(range(10))
+2print(elems)
+3
+4==> [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+5
+6print(elems[::-1])
+7
+8==> [9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+而[x:y:z]这种语法的意思是，从索引x到索引y，每z个元素取一个。
+如果z是负数，就是反向取了。
+如果x不特别指定，就默认是在遍历列表的方向上，遇到的第一个元素。
+如果y不特别指定，就默认是列表最后一个元素。
+所以，我们要从一个列表里面，每两个取一个的话，就是 [::2]。
+1evens = elems[::2]
+2print(evens)
+3
+4reversed_evens = elems[-2::-2]
+5print(reversed_evens)
+6
+7==> [0, 2, 4, 6, 8]
+8    [8, 6, 4, 2, 0]
+也可以用这种方法，把一个列表里的偶数都删掉，只留奇数：
+1del elems[::2]
+2print(elems)
+3
+4==> [1, 3, 5, 7, 9]
+2.3、插入 (Insertion)
+把列表里的其中一个元素的值，换成另一个值。
+1elems = list(range(10))
+2elems[1] = 10
+3print(elems)
+4
+5==> [0, 10, 2, 3, 4, 5, 6, 7, 8, 9]
+如果想把某个索引处的一个元素，替换成多个元素，比如把1换成20, 30, 40：
+1elems = list(range(10))
+2elems[1:2] = [20, 30, 40]
+3print(elems)
+4
+5==> [0, 20, 30, 40, 2, 3, 4, 5, 6, 7, 8, 9]
+如果想把3个值 0.2, 0.3, 0.5 插在索引0和索引1之间：
+1elems = list(range(10))
+2elems[1:1] = [0.2, 0.3, 0.5]
+3print(elems)
+4
+5==> [0, 0.2, 0.3, 0.5, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+2.4、拉平 (Flattening)
+如果，一个列表里的每个元素都是个列表，可以用sum把它拉平：
+1list_of_lists = [[1], [2, 3], [4, 5, 6]]
+2sum(list_of_lists, [])
+3
+4==> [1, 2, 3, 4, 5, 6]
+如果是嵌套列表 (Nested List) 的话，就可以用递归的方法把它拉平。这也是lambda函数又一种优美的使用方法：在创建函数的同一行，就能用上这个函数。
+1nested_lists = [[1, 2], [[3, 4], [5, 6], [[7, 8], [9, 10], [[11, [12, 13]]]]]]
+2flatten = lambda x: [y for l in x for y in flatten(l)] if type(x) is list else [x]
+3flatten(nested_lists)
+4
+5# This line of code is from
+6# https://github.com/sahands/python-by-example/blob/master/python-by-example.rst#flattening-lists
+2.5、列表vs生成器
+要想知道列表和生成器的区别在哪，看个例子：从token列表里面创建n-grams。
+一种方法是用滑窗来创建：
+1tokens = ['i', 'want', 'to', 'go', 'to', 'school']
+2
+3defngrams(tokens, n):
+4    length = len(tokens)
+5    grams = []
+6for i in range(length - n + 1):
+7        grams.append(tokens[i:i+n])
+8return grams
+9
+10print(ngrams(tokens, 3))
+11
+12==> [['i', 'want', 'to'],
+13     ['want', 'to', 'go'],
+14     ['to', 'go', 'to'],
+15     ['go', 'to', 'school']]
+上面这个例子，是需要把所有n-gram同时储存起来的。如果文本里有m个token，内存需求就是 O(nm) 。m值太大的话，存储就可能成问题。
+所以，不一定要用一个列表储存所有n-gram。可以用一个生成器，在收到指令的时候，生成下一个n-gram，这叫做惰性计算 (Lazy Evaluation) 。
+只要让ngrams函数，用yield关键字返回一个生成器，然后内存需求就变成O(n)了。
+1defngrams(tokens, n):
+2    length = len(tokens)
+3for i in range(length - n + 1):
+4yield tokens[i:i+n]
+5
+6ngrams_generator = ngrams(tokens, 3)
+7print(ngrams_generator)
+8
+9==>
+10
+11for ngram in ngrams_generator:
+12    print(ngram)
+13
+14==> ['i', 'want', 'to']
+15    ['want', 'to', 'go']
+16    ['to', 'go', 'to']
+17    ['go', 'to', 'school']
+还有一种生成n-grams的方法，是用切片来创建列表：[0, 1, …, -n], [1, 2, …, -n+1], …, [n-1, n, …, -1]，然后把它们zip到一起。
+1defngrams(tokens, n):
+2    length = len(tokens)
+3    slices = (tokens[i:length-n+i+1] for i in range(n))
+4return zip(*slices)
+5
+6ngrams_generator = ngrams(tokens, 3)
+7print(ngrams_generator)
+8
+9==>  # zip objects are generators
+10
+11for ngram in ngrams_generator:
+12    print(ngram)
+13
+14==> ('i', 'want', 'to')
+15    ('want', 'to', 'go')
+16    ('to', 'go', 'to')
+17    ('go', 'to', 'school')
+注意，创建切片用的是 (tokens[…] for i in range(n)) ，不是 [tokens[…] for i in range(n)] 。
+[] 返回的是列表，() 返回的是生成器。
+3、类，以及魔术方法
+在Python里面，魔术方法 (Magic Methods) 是用双下划线，作为前缀后缀的。
+其中，最知名的可能就是_init_了。
+1classNode:
+2""" A struct to denote the node of a binary tree.
+3    It contains a value and pointers to left and right children.
+4    """
+5def__init__(self, value, left=None, right=None):
+6        self.value = value
+7        self.left = left
+8        self.right = right
+不过，如果想输出 (Print) 一个节点 (Node) ，就不是很容易了。
+1root = Node(5)
+2print(root) # <__main__.Node object at 0x1069c4518>
+理想情况，应该是输出它的值，如果它有子节点的话，也输出子节点的值。
+所以，要用魔术方法 _repr_ ，它必须返回一个可输出的object，如字符串。
+1classNode:
+2""" A struct to denote the node of a binary tree.
+3    It contains a value and pointers to left and right children.
+4    """
+5def__init__(self, value, left=None, right=None):
+6        self.value = value
+7        self.left = left
+8        self.right = right
+9
+10def__repr__(self):
+11        strings = [f'value: {self.value}']
+12        strings.append(f'left: {self.left.value}'if self.left else'left: None')
+13        strings.append(f'right: {self.right.value}'if self.right else'right: None')
+14return', '.join(strings)
+15
+16left = Node(4)
+17root = Node(5, left)
+18print(root) # value: 5, left: 4, right: None
+如果想对比两个节点 (的各种值) ，就用_eq_来重载==运算符，用_lt_来重载 < 运算符，用 _ge_来重载 >= 。
+1classNode:
+2""" A struct to denote the node of a binary tree.
+3    It contains a value and pointers to left and right children.
+4    """
+5def__init__(self, value, left=None, right=None):
+6        self.value = value
+7        self.left = left
+8        self.right = right
+9
+10def__eq__(self, other):
+11return self.value == other.value
+12
+13def__lt__(self, other):
+14return self.value < other.value
+15
+16def__ge__(self, other):
+17return self.value >= other.value
+18
+19
+20left = Node(4)
+21root = Node(5, left)
+22print(left == root) # False
+23print(left < root) # True
+24print(left >= root) # False
+想要了解更多魔术方法，请前往：
+https://www.tutorialsteacher.com/python/magic-methods-in-python
+或者使用官方文档，只是有一点点难读：
+https://docs.python.org/3/reference/datamodel.html#special-method-names
+这里，还要重点安利几种魔术方法：
+对于像节点这样的类，我们已经知道了它支持的所有属性 (Attributes) ：value、left和right，那就可以用 _slots_ 来表示这些值。这样有助于提升性能，节省内存。
+1classNode:
+2""" A struct to denote the node of a binary tree.
+3    It contains a value and pointers to left and right children.
+4    """
+5    __slots__ = ('value', 'left', 'right')
+6def__init__(self, value, left=None, right=None):
+7        self.value = value
+8        self.left = left
+9        self.right = right
+想要全面了解 _slots_的优点和缺点，可以看看Aaron Hall的精彩回答：
+https://stackoverflow.com/a/28059785/5029595
+4、局部命名空间，对象的属性
+locals() 函数，返回的是一个字典 (Dictionary) ，它包含了局部命名空间 (Local Namespace) 里定义的变量。
+1classModel1:
+2def__init__(self, hidden_size=100, num_layers=3, learning_rate=3e-4):
+3        print(locals())
+4        self.hidden_size = hidden_size
+5        self.num_layers = num_layers
+6        self.learning_rate = learning_rate
+7
+8model1 = Model1()
+9
+10==> {'learning_rate': 0.0003, 'num_layers': 3, 'hidden_size': 100, 'self': <__main__.Model1 object at 0x1069b1470>}
+一个object的所有属性，都存在 _dict_ 里面。
+1print(model1.__dict__)
+2
+3==> {'hidden_size': 100, 'num_layers': 3, 'learning_rate': 0.0003}
+注意，当参数列表 (List of Arguments) 很大的时候，手动把每个参数值分配给一个属性会很累。
+想简单一点的话，可以直接把整个参数列表分配给_dict_。
+1classModel2:
+2def__init__(self, hidden_size=100, num_layers=3, learning_rate=3e-4):
+3        params = locals()
+4del params['self']
+5        self.__dict__ = params
+6
+7model2 = Model2()
+8print(model2.__dict__)
+9
+10==> {'learning_rate': 0.0003, 'num_layers': 3, 'hidden_size': 100}
+当object是用 kwargs** 初始化的时候，这种做法尤其方便 (虽然 kwargs** 还是尽量少用为好) ：
+1classModel3:
+2def__init__(self, **kwargs):
+3        self.__dict__ = kwargs
+4
+5model3 = Model3(hidden_size=100, num_layers=3, learning_rate=3e-4)
+6print(model3.__dict__)
+7
+8==> {'hidden_size': 100, 'num_layers': 3, 'learning_rate': 0.0003}
+前4个版块就到这里了，至于第5个版块传授了怎样的技巧，先不介绍，大家可以从传送门前往观察：
+https://github.com/chiphuyen/python-is-cool
+宝藏小姐姐
+贡献资源的Chip Huyen小姐姐，现在是英伟达的高级深度学习工程师了。
+但在2015年进入斯坦福读书之前，她还是个没接触过深度学习的作家，旅行路上的故事已经出版了两本书。
+△ 对，是个越南小姐姐
+原本想读英文专业，却在选了一门计算机课之后，走上了深度学习的不归路。
+毕业前，她在Netflix实习过；毕业后，她在斯坦福教过TensorFlow，课号CS20；一年前离开学校，进入英伟达。
+正式选择了机器学习的她，依然像旅行的时候一样，喜欢和大家分享经历。
+这位小姐姐产出的各式资源和感悟，量子位也介绍过不止一次。
+爬网页、洗数据、创建海量数据集一条龙：
+https://mp.weixin.qq.com/s/rOXKglzYLRqTJkyLEZqJ6A
+免费机器学习课程，从概率统计到全栈深度学习：
+https://mp.weixin.qq.com/s/Jk8YuQuP5e64Q0ak-WJUKg
+AI从业者要不要读博，要不要自己创业：
+https://mp.weixin.qq.com/s/MTpS6RwCTLIxwP8iDbZotQ
+加上今天的Python隐藏技巧，(至少) 是第四次了：
+传送门
+如果你想更顺滑地使用Python，快马克这些方法吧。
+项目传送门：
+https://github.com/chiphuyen/python-is-cool
+Notebook传送门：
+https://github.com/chiphuyen/python-is-cool/blob/master/cool-python-tips.ipynb
+大咖齐聚！量子位MEET大会报名开启
+量子位MEET 2020智能未来大会启幕，将携手优秀AI企业、杰出科研人员呈现一场高质量AI行业峰会！现在扫码报名，可享早鸟优惠！
+榜单征集！三大奖项，锁定AI Top玩家
+2019中国人工智能年度评选启幕，将评选领航企业、商业突破人物、最具创新力产品3大奖项，并于MEET 2020大会揭榜，欢迎优秀的AI公司扫码报名！
+量子位 QbitAI · 头条号签约作者
+վ'ᴗ' ի 追踪AI技术和产品新动态
+（声明：本文仅代表作者观点，不代表新浪网立场。）
