@@ -1,0 +1,4 @@
+南航博士后获MICCAI 2019青年科学家奖
+原标题：南航博士后获MICCAI 2019青年科学家奖  来源：南京航空航天大学
+日前，在2019年第22届医学图像计算和计算机辅助干预国际会议（The 22th Medical Image Computing Computer Assisted Intervention，MICCAI 2019）上，南京航空航天大学计算机科学技术学院/人工智能学院博士后邵伟在MICCAI正会上展示了他在联合基因影像数据进行预后预测上的研究工作，并凭借论文《Diagnosis-Guided Multi-modal Feature Selection for Prognosis Prediction of Lung Squamous Cell Carcinoma》获得大会青年科学家奖。成为本次会议5位获奖者中唯一国内的青年科学家。
+MICCAI是医学图像分析领域国际公认的最具影响力的学术会议。今年的MICCAI会议在中国深圳召开，大会共计收稿1809篇，最终录取538篇，录取率约为30%。MICCAI青年学者奖（Young Scientist Award）每年评选一次，获奖者不多于5人，以表彰MICCA会议上的最佳论文及作者。青年学者成就奖的候选人名单需要经过三轮论文评审产生（专家盲审、主席团评审、评审团评审）；该奖项自2005年设置以来仅产生了77位获奖者。
